@@ -1,0 +1,120 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  build-windows:
+    name: Build Windows x64
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.26.x"
+          cache: true
+
+      - name: Sync version from build/config.yml
+        shell: pwsh
+        run: |
+          $v = (Select-String -Path build/config.yml -Pattern '^\s*version:\s*"?([0-9]+\.[0-9]+\.[0-9]+)' | Select-Object -First 1).Matches[0].Groups[1].Value
+          $j = Get-Content build/windows/info.json -Raw | ConvertFrom-Json
+          $j.fixed.file_version = $v
+          $j.info.'0000'.ProductVersion = $v
+          $j | ConvertTo-Json -Depth 5 | Set-Content build/windows/info.json -Encoding utf8
+          Write-Host "version: $v"
+
+      - name: Generate Windows resources (icon/manifest/version)
+        shell: pwsh
+        run: |
+          Push-Location build
+          wails3 generate syso -arch amd64 -icon windows/icon.ico -manifest windows/wails.exe.manifest -info windows/info.json -out ../wails_windows_amd64.syso
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          Pop-Location
+
+      - name: Build release exe
+        shell: pwsh
+        run: go build -tags production -ldflags "-s -w -H windowsgui" -o bin/dsh-shell.exe .
+
+      - name: Verify artifact
+        shell: pwsh
+        run: Get-Item bin/dsh-shell.exe | Select-Object Name, Length
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dsh-shell-windows
+          path: bin/dsh-shell.exe
+
+  build-macos:
+    name: Build macOS Universal
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.26.x"
+          cache: true
+
+      - name: Sync version from build/config.yml
+        run: |
+          V=$(sed -n 's/^[[:space:]]*version:[[:space:]]*\([0-9][0-9.]*\).*/\1/p' build/config.yml | head -1)
+          /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $V" -c "Set :CFBundleVersion $V" build/darwin/Info.plist
+          echo "version: $V"
+
+      - name: Build darwin/amd64
+        run: GOARCH=amd64 CGO_ENABLED=1 go build -tags production -ldflags "-s -w" -o build/bin/dsh-shell-amd64 .
+
+      - name: Build darwin/arm64
+        run: GOARCH=arm64 CGO_ENABLED=1 go build -tags production -ldflags "-s -w" -o build/bin/dsh-shell-arm64 .
+
+      - name: Create universal binary
+        run: lipo -create -output build/bin/dsh-shell build/bin/dsh-shell-amd64 build/bin/dsh-shell-arm64 && rm build/bin/dsh-shell-amd64 build/bin/dsh-shell-arm64
+
+      - name: Assemble .app bundle
+        run: |
+          APP="build/bin/DSH Desktop.app"
+          mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
+          cp build/bin/dsh-shell "$APP/Contents/MacOS/dsh-shell"
+          cp build/darwin/Info.plist "$APP/Contents/Info.plist"
+          ICONSET=$(mktemp -d)
+          for s in 16 32 128 256 512; do
+            sips -z $s $s build/appicon.png --out "$ICONSET/icon_${s}x${s}.png" >/dev/null
+            d=$((s * 2))
+            sips -z $d $d build/appicon.png --out "$ICONSET/icon_${s}x${s}@2x.png" >/dev/null
+          done
+          iconutil -c icns "$ICONSET" -o "$APP/Contents/Resources/icons.icns"
+          rm -rf "$ICONSET"
+
+      - name: Package .app as zip
+        run: ditto -c -k --keepParent "build/bin/DSH Desktop.app" "build/bin/DSH-Desktop-macOS-universal.zip"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dsh-shell-macos
+          path: build/bin/DSH-Desktop-macOS-universal.zip
+
+  release:
+    name: Publish Release
+    needs: [build-windows, build-macos]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: List artifacts
+        run: find artifacts -type f
+
+      - name: Attach assets to GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            artifacts/dsh-shell-windows/dsh-shell.exe
+            artifacts/dsh-shell-macos/*.zip
