@@ -20,6 +20,9 @@ jobs:
           go-version: "1.26.x"
           cache: true
 
+      - name: Install wails3 CLI
+        run: go install github.com/wailsapp/wails/v3/cmd/wails3@v3.0.0-beta.6
+
       - name: Sync version from build/config.yml
         shell: pwsh
         run: |
@@ -82,7 +85,8 @@ jobs:
           mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
           cp build/bin/dsh-shell "$APP/Contents/MacOS/dsh-shell"
           cp build/darwin/Info.plist "$APP/Contents/Info.plist"
-          ICONSET=$(mktemp -d)
+          ICONSET="build/bin/icons.iconset"
+          mkdir -p "$ICONSET"
           for s in 16 32 128 256 512; do
             sips -z $s $s build/appicon.png --out "$ICONSET/icon_${s}x${s}.png" >/dev/null
             d=$((s * 2))
