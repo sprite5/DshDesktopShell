@@ -1,0 +1,15 @@
+{
+	"fixed": {
+		"file_version": "1.0.0"
+	},
+	"info": {
+		"0000": {
+			"ProductVersion": "1.0.0",
+			"CompanyName": "dsh-shell",
+			"FileDescription": "DeepSeek Harness Web 桌面壳",
+			"LegalCopyright": "Copyright dsh-shell contributors",
+			"ProductName": "DSH Desktop",
+			"Comments": "DeepSeek Harness Web 桌面壳"
+		}
+	}
+}

@@ -1,0 +1,5 @@
+bin/
+data/
+tmp/
+*.tmp
+*.syso

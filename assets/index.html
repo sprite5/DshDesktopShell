@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DSH Desktop — 连接设置</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<main class="card">
+  <header class="logo-row">
+    <img src="/logo.png" alt="DSH" class="logo">
+    <div>
+      <h1>DSH Desktop</h1>
+      <p class="sub">DeepSeek Harness Web 桌面壳</p>
+    </div>
+  </header>
+
+  <section id="dsh-section">
+    <h2>本地 dsh</h2>
+    <div id="dsh-status" class="status-line">检测中…</div>
+    <div id="dsh-install" class="install-hint" hidden>
+      未检测到 dsh。可全局安装 <code>npm install -g @deepseek-ai/dsh</code>，
+      或让本应用通过 <code>npx @deepseek-ai/dsh</code> 启动（需 npx 与网络）。
+      也可以直接使用下方的连接地址。
+    </div>
+    <div id="dsh-actions" class="quick" hidden>
+      <button id="start-managed" class="primary" type="button">启动本地 dsh（托管）</button>
+      <button id="restart-managed" type="button" class="chip" hidden>重启 dsh</button>
+    </div>
+    <pre id="dsh-logs" class="logs" hidden></pre>
+  </section>
+
+  <section>
+    <h2>连接地址</h2>
+    <p class="hint">本地手动启动的 dsh，或已反代好的远程地址（http/https）。连接后本应用不管理该 dsh 进程。</p>
+    <div class="row">
+      <input id="url" type="text" placeholder="http://127.0.0.1:3080" spellcheck="false" autocomplete="off">
+      <button id="connect" class="primary" type="button">连接</button>
+    </div>
+    <div class="quick">
+      <button type="button" class="chip" data-url="http://127.0.0.1:3080">本地 127.0.0.1:3080</button>
+      <button id="probe" type="button" class="chip">测试连接</button>
+    </div>
+  </section>
+
+  <section id="recent-section" hidden>
+    <h2>最近使用</h2>
+    <div id="recent" class="recent"></div>
+  </section>
+
+  <p id="status" class="status" hidden></p>
+
+  <footer>
+    <span id="version"></span>
+    <span class="hint">托管模式：dsh 随本应用启动/退出，托盘可重启；外部连接不管理 dsh 进程。</span>
+  </footer>
+</main>
+<script src="/app.js"></script>
+</body>
+</html>

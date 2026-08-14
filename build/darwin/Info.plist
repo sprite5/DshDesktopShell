@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleName</key>
+	<string>DSH Desktop</string>
+	<key>CFBundleExecutable</key>
+	<string>dsh-shell</string>
+	<key>CFBundleIdentifier</key>
+	<string>app.dsh.desktop</string>
+	<key>CFBundleVersion</key>
+	<string>1.0.0</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0.0</string>
+	<key>CFBundleGetInfoString</key>
+	<string>DeepSeek Harness Web 桌面壳</string>
+	<key>CFBundleIconFile</key>
+	<string>icons</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>12.0.0</string>
+	<key>NSHighResolutionCapable</key>
+	<string>true</string>
+	<key>NSHumanReadableCopyright</key>
+	<string>Copyright dsh-shell contributors</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<!-- 允许 http 局域网/本机地址（dsh web 的 LAN: http://192.168.x.x:PORT）。
+		     loopback(127.0.0.1) 本就豁免 ATS；此处放行私有网段 http。 -->
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+	</dict>
+</dict>
+</plist>

@@ -1,0 +1,8 @@
+info:
+  name: DSH Desktop
+  description: DeepSeek Harness Web 桌面壳
+  version: 1.0.0
+  author: dsh-shell
+  identifier: app.dsh.desktop
+  binaryname: dsh-shell
+  comments: A thin desktop shell that points a WebView at a local or remote DeepSeek Harness Web GUI.
