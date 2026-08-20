@@ -1,7 +1,7 @@
 info:
   name: DSH Desktop
   description: DeepSeek Harness Web 桌面壳
-  version: 1.0.0
+  version: 1.0.1
   author: dsh-shell
   identifier: app.dsh.desktop
   binaryname: dsh-shell

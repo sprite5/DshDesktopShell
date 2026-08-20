@@ -10,7 +10,7 @@
 [![Wails](https://img.shields.io/badge/Wails%20v3-v3.0.0--beta.6-DF4B74)](https://v3.wails.io)
 [![Windows](https://img.shields.io/badge/Windows-已验证-0078D6?logo=windows&logoColor=white)]()
 [![macOS](https://img.shields.io/badge/macOS-待实测-000000?logo=apple&logoColor=white)]()
-[![Version](https://img.shields.io/badge/version-1.0.0-4f8cff)]()
+[![Version](https://img.shields.io/badge/version-1.0.1-4f8cff)]()
 [![License](https://img.shields.io/badge/License-MIT-yellow)]()
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)]()
 

@@ -11,9 +11,9 @@
 	<key>CFBundleIdentifier</key>
 	<string>app.dsh.desktop</string>
 	<key>CFBundleVersion</key>
-	<string>1.0.0</string>
+	<string>1.0.1</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0.0</string>
+	<string>1.0.1</string>
 	<key>CFBundleGetInfoString</key>
 	<string>DeepSeek Harness Web 桌面壳</string>
 	<key>CFBundleIconFile</key>
