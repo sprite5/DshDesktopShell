@@ -95,13 +95,14 @@ jobs:
           iconutil -c icns "$ICONSET" -o "$APP/Contents/Resources/icons.icns"
           rm -rf "$ICONSET"
 
-      - name: Package .app as zip
-        run: ditto -c -k --keepParent "build/bin/DSH Desktop.app" "build/bin/DSH-Desktop-macOS-universal.zip"
-
+      # Distribute the .app bundle as-is. Geeker-friendly: the GitHub Release
+      # attachment is the directory itself (preserved by the browser download),
+      # so users drag it into /Applications without an intermediate unzip.
       - uses: actions/upload-artifact@v4
         with:
           name: dsh-shell-macos
-          path: build/bin/DSH-Desktop-macOS-universal.zip
+          path: build/bin/DSH Desktop.app
+          if-no-files-found: error
 
   release:
     name: Publish Release
@@ -113,7 +114,7 @@ jobs:
           path: artifacts
 
       - name: List artifacts
-        run: find artifacts -type f
+        run: find artifacts ( -type f -o -type d ) | sort
 
       - name: Attach assets to GitHub Release
         if: startsWith(github.ref, 'refs/tags/')
@@ -121,4 +122,4 @@ jobs:
         with:
           files: |
             artifacts/dsh-shell-windows/dsh-shell.exe
-            artifacts/dsh-shell-macos/*.zip
+            artifacts/dsh-shell-macos/*.app
